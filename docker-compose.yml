@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  reverse-proxy:
+    image: nginx:alpine
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./infra/nginx:/etc/nginx/conf.d:ro
+    restart: unless-stopped
+
+  app:
+    build: ./app
+    expose:
+      - "3000"
+    environment:
+      - APP_ENV=production
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=contributot
+      - POSTGRES_USER=contributot
+      - POSTGRES_PASSWORD=changeme
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  db_data:
