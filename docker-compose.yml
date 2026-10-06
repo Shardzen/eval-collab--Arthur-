@@ -2,12 +2,13 @@ version: "3.9"
 
 services:
   reverse-proxy:
-    image: nginx:alpine
+    image: nginx:latest
     ports:
       - "443:443"
       - "80:80"
     volumes:
       - ./infra/nginx:/etc/nginx/conf.d:ro
+      - ./certs:/etc/nginx/certs:ro
     restart: unless-stopped
 
   app:
@@ -20,6 +21,8 @@ services:
 
   db:
     image: postgres:16-alpine
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_DB=contributot
       - POSTGRES_USER=contributot
